@@ -1,7 +1,8 @@
-# 3.24.1 is bundled in Visual Studio 2022 v17.4
-# 3.24.1 is also bundled in CLion as of 2023
 cmake_minimum_required(VERSION 3.24.1)
 
+# set(CXX_FLAGS "-Wall")
+# set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES CXX_STANDARD 23)
 
 # This tells cmake we have goodies in the /cmake folder
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -13,25 +14,21 @@ include(PamplejuceMacOS)
 # Couple tweaks that IMO should be JUCE defaults
 include(JUCEDefaults)
 
-# Change me!
-# This is the internal name of the project and the name of JUCE's shared code target
-# Note: This cannot have spaces (it may be 2024, but you can't have it all!)
-# Worry not, JUCE's PRODUCT_NAME can have spaces (and is what DAWs display)
-set(PROJECT_NAME "Pamplejuce")
+# Internal name of the project and the name of JUCE's shared code target -- can't have spaces
+set(PROJECT_NAME "ControlGris")
 
-# Worry not, JUCE's PRODUCT_NAME can have spaces (and is what DAWs will display)
-# You can also just have it be the same thing as PROJECT_NAME
+# "External" name that will be displayed. Can have spaces.
 # You may want to append the major version on the end of this (and PROJECT_NAME) ala:
 #   set(PROJECT_NAME "MyPlugin_v${MAJOR_VERSION}")
 # Doing so enables major versions to show up in IDEs and DAWs as separate plugins
 # allowing you to change parameters and behavior without breaking existing user projects
-set(PRODUCT_NAME "Pamplejuce Demo")
+set(PRODUCT_NAME "ControlGris")
 
 # Change me! Used for the MacOS bundle name and Installers
-set(COMPANY_NAME "Pamplejuce Company")
+set(COMPANY_NAME "UdeM")
 
 # Change me! Used for the MacOS bundle identifier (and signing)
-set(BUNDLE_ID "com.pamplejuce.pamplejuce")
+set(BUNDLE_ID "com.gris.umontreal.controlgris")
 
 # Change me! Set the plugin formats you want built
 # Valid choices: AAX Unity VST VST3 AU AUv3 Standalone
@@ -46,10 +43,10 @@ project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 # On Github Actions, this is done as a part of actions/checkout
 add_subdirectory(JUCE)
 
-# Add any other modules you want modules here, before the juce_add_plugin call
+# Add any other juce modules you want here, before the juce_add_plugin call
 # juce_add_module(modules/my_module)
 
-# This adds the melatonin inspector module
+# add submodules here
 add_subdirectory (modules/melatonin_inspector)
 
 # See `docs/CMake API.md` in the JUCE repo for all config options
@@ -60,6 +57,15 @@ juce_add_plugin("${PROJECT_NAME}"
     # Change me!
     COMPANY_NAME "${COMPANY_NAME}"
     BUNDLE_ID "${BUNDLE_ID}"
+    AAX_IDENTIFIER "com.udem.GRIS.ControlGris"
+    IS_SYNTH FALSE
+    NEEDS_MIDI_INPUT FALSE
+    NEEDS_MIDI_OUTPUT FALSE
+    IS_MIDI_EFFECT FALSE
+    VST2_CATEGORY kPlugCategEffect
+    VST3_CATEGORIES Fx
+    AU_MAIN_TYPE kAudioUnitType_kAudioUnitType_EffectMusicDevice
+    AAX_CATEGORY None
 
     # On MacOS, plugin is copied to ~/Users/yourname/Library/Audio/Plug-Ins/
     COPY_PLUGIN_AFTER_BUILD TRUE
@@ -67,12 +73,12 @@ juce_add_plugin("${PROJECT_NAME}"
     # Change me!
     # A four-character plugin id
     # First character MUST be uppercase for AU formats
-    PLUGIN_MANUFACTURER_CODE Pamp
+    PLUGIN_MANUFACTURER_CODE UdeM
 
     # Change me!
     # A unique four-character plugin id
     # Note: this must have at least one upper-case character
-    PLUGIN_CODE P001
+    PLUGIN_CODE Xzz1
     FORMATS "${FORMATS}"
 
     # The name of your final executable
@@ -93,7 +99,7 @@ include(SharedCodeDefaults)
 # Just ensure you employ CONFIGURE_DEPENDS so the build system picks up changes
 # If you want to appease the CMake gods and avoid globs, manually add files like so:
 # set(SourceFiles Source/PluginEditor.h Source/PluginProcessor.h Source/PluginEditor.cpp Source/PluginProcessor.cpp)
-file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h")
+file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/source/*.hpp")
 target_sources(SharedCode INTERFACE ${SourceFiles})
 
 # Adds a BinaryData target for embedding assets into the binary
@@ -111,15 +117,12 @@ target_compile_definitions(SharedCode
     JUCE_USE_CURL=0     # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
     JUCE_VST3_CAN_REPLACE_VST2=0
 
-    # Uncomment if you are paying for a an Indie/Pro license or releasing under GPLv3
-    # JUCE_DISPLAY_SPLASH_SCREEN=0
-
     # lets the app known if we're Debug or Release
     CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
     VERSION="${CURRENT_VERSION}"
 
     # JucePlugin_Name is for some reason doesn't use the nicer PRODUCT_NAME
-    PRODUCT_NAME_WITHOUT_VERSION="Pamplejuce"
+    PRODUCT_NAME_WITHOUT_VERSION="ControlGRIS"
 )
 
 # Link to any other modules you added (with juce_add_module) here!
@@ -139,6 +142,10 @@ target_link_libraries(SharedCode
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
+
+if(MSVC)
+    target_link_libraries(SharedCode INTERFACE Dwmapi.lib)
+endif()
 
 # Link the JUCE plugin targets our SharedCode target
 target_link_libraries("${PROJECT_NAME}" PRIVATE SharedCode)
