@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-
 #include "cg_ControlGrisLookAndFeel.hpp"
 
 namespace gris

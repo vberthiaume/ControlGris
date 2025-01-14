@@ -22,8 +22,6 @@
 
 #include <type_traits>
 
-#include <JuceHeader.h>
-
 #include "cg_ElevationDrawingHandle.hpp"
 #include "cg_ElevationSourceComponent.hpp"
 #include "cg_PositionSourceComponent.hpp"

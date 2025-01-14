@@ -21,7 +21,7 @@
 
 #include <optional>
 
-#include <JuceHeader.h>
+#include "juce_gui_basics/juce_gui_basics.h"
 
 #include "cg_Source.hpp"
 #include "cg_Trajectory.hpp"

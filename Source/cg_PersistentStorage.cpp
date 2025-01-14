@@ -1,6 +1,7 @@
 #include "cg_PersistentStorage.h"
 
-#include <JuceHeader.h>
+#include "juce_core/juce_core.h"
+#include "juce_data_structures/juce_data_structures.h"
 
 static juce::String const SHOW_SECONDARY_SOURCE_DRAG_ERROR_MESSAGE_TAG{ "SHOW_SECONDARY_SOURCE_DRAG_ERROR_MESSAGE" };
 

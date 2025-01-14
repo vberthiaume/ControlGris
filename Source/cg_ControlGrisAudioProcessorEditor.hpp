@@ -20,8 +20,6 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-
 #include "cg_BannerComponent.hpp"
 #include "cg_FieldComponent.hpp"
 #include "cg_SectionOscController.hpp"

@@ -20,7 +20,9 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include "juce_core/juce_core.h"
+#include "juce_gui_basics/juce_gui_basics.h"
+#include "juce_graphics/juce_graphics.h"
 
 namespace gris
 {
@@ -28,8 +30,8 @@ namespace gris
 class GrisLookAndFeel final : public juce::LookAndFeel_V3
 {
     float mFontSize;
-    juce::Font mFont{ juce::CustomTypeface::createSystemTypefaceFor(
-        BinaryData::SinkinSans400Regular_otf,
+    juce::Font mFont{ juce::Typeface::createSystemTypefaceFor(
+        juce::BinaryData::SinkinSans400Regular_otf,
         static_cast<size_t>(BinaryData::SinkinSans400Regular_otfSize)) };
     juce::Font mBigFont{ juce::CustomTypeface::createSystemTypefaceFor(
         BinaryData::SinkinSans400Regular_otf,
